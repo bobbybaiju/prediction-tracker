@@ -1,11 +1,13 @@
 import { format } from 'date-fns'
-import { Calendar, Check, X } from 'lucide-react'
+import { Calendar, Check, X, Share2 } from 'lucide-react'
 import { isAdmin } from '../config/admins'
 import { useState } from 'react'
 import { ResolvePredictionModal } from './ResolvePredictionModal'
+import { ShareCardModal } from './ShareCardModal'
 
 export const PredictionCard = ({ prediction, profile, currentUser, onResolve }) => {
   const [showModal, setShowModal] = useState(false)
+  const [showShareModal, setShowShareModal] = useState(false)
   const userIsAdmin = isAdmin(currentUser?.email)
 
   const getStatusColor = () => {
@@ -64,14 +66,25 @@ export const PredictionCard = ({ prediction, profile, currentUser, onResolve }) 
             </span>
           </div>
 
-          {!prediction.resolved && userIsAdmin && (
-            <button
-              onClick={() => setShowModal(true)}
-              className="text-sm px-3 py-1.5 bg-white text-black font-medium rounded transition-fast hover:bg-gray-200"
-            >
-              Resolve
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            {prediction.resolved && (
+              <button
+                onClick={() => setShowShareModal(true)}
+                className="text-sm px-3 py-1.5 bg-dark-border text-white font-medium rounded transition-fast hover:bg-gray-700 flex items-center gap-1"
+              >
+                <Share2 className="w-4 h-4" />
+                Share
+              </button>
+            )}
+            {!prediction.resolved && userIsAdmin && (
+              <button
+                onClick={() => setShowModal(true)}
+                className="text-sm px-3 py-1.5 bg-white text-black font-medium rounded transition-fast hover:bg-gray-200"
+              >
+                Resolve
+              </button>
+            )}
+          </div>
         </div>
 
         {prediction.resolved && prediction.resolved_at && (
@@ -86,6 +99,18 @@ export const PredictionCard = ({ prediction, profile, currentUser, onResolve }) 
           prediction={prediction}
           onResolve={handleResolve}
           onClose={() => setShowModal(false)}
+        />
+      )}
+
+      {showShareModal && (
+        <ShareCardModal
+          type="prediction"
+          data={{
+            prediction,
+            displayName: profile?.display_name || profile?.email || 'Unknown',
+            isCorrect: prediction.correct,
+          }}
+          onClose={() => setShowShareModal(false)}
         />
       )}
     </>

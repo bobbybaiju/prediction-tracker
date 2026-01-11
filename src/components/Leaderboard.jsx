@@ -1,6 +1,9 @@
-import { Crown, TrendingUp } from 'lucide-react'
+import { Crown, TrendingUp, Share2 } from 'lucide-react'
+import { useState } from 'react'
+import { ShareCardModal } from './ShareCardModal'
 
 export const Leaderboard = ({ leaderboard }) => {
+  const [shareData, setShareData] = useState(null)
   if (leaderboard.length === 0) {
     return (
       <div className="bg-dark-card border border-dark-border rounded-lg p-6">
@@ -77,10 +80,34 @@ export const Leaderboard = ({ leaderboard }) => {
                   <div className="text-xs text-gray-500">streak</div>
                 </div>
               )}
+
+              {/* Share Button */}
+              <button
+                onClick={() => setShareData({
+                  displayName: user.displayName,
+                  rank,
+                  accuracy: user.accuracy,
+                  correct: user.correct,
+                  resolved: user.resolved,
+                  streak: user.streak,
+                })}
+                className="p-2 hover:bg-dark-border rounded transition-fast"
+                title="Share stats"
+              >
+                <Share2 className="w-4 h-4 text-gray-400" />
+              </button>
             </div>
           )
         })}
       </div>
+
+      {shareData && (
+        <ShareCardModal
+          type="stats"
+          data={shareData}
+          onClose={() => setShareData(null)}
+        />
+      )}
     </div>
   )
 }

@@ -1,6 +1,30 @@
 import { Check, X } from 'lucide-react'
+import confetti from 'canvas-confetti'
 
 export const ResolvePredictionModal = ({ prediction, onResolve, onClose }) => {
+  const handleResolve = (isCorrect) => {
+    // Fire confetti
+    if (isCorrect) {
+      // Green confetti burst for correct
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#00C853', '#00E676', '#69F0AE', '#ffffff']
+      })
+    } else {
+      // Red confetti for incorrect
+      confetti({
+        particleCount: 60,
+        spread: 50,
+        origin: { y: 0.6 },
+        colors: ['#FF5252', '#FF1744', '#FF8A80', '#ffffff']
+      })
+    }
+
+    onResolve(isCorrect)
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
@@ -22,14 +46,14 @@ export const ResolvePredictionModal = ({ prediction, onResolve, onClose }) => {
 
         <div className="flex gap-3">
           <button
-            onClick={() => onResolve(true)}
+            onClick={() => handleResolve(true)}
             className="flex-1 bg-success text-white font-medium rounded px-4 py-2.5 transition-fast hover:bg-success/90 flex items-center justify-center gap-2"
           >
             <Check className="w-5 h-5" />
             Correct
           </button>
           <button
-            onClick={() => onResolve(false)}
+            onClick={() => handleResolve(false)}
             className="flex-1 bg-error text-white font-medium rounded px-4 py-2.5 transition-fast hover:bg-error/90 flex items-center justify-center gap-2"
           >
             <X className="w-5 h-5" />
